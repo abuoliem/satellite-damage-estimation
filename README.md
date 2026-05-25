@@ -58,9 +58,9 @@ Rscript FHDI_FEFI_NAIVE_5times.R
 ---
 
 ## 💾 Data Availability
-*   **Raw Images:** Pre- and post-disaster satellite imagery (from Maxar Technologies and NOAA) are included in the `images/` directory.
+*   **Raw Images:** Pre- and post-disaster satellite imagery (acquired via the Google Earth Platform / GEP) are included in the `images/` directory.
 *   **Feature Dataset:** The fully processed numerical features used for the imputation experiments are provided directly in the file `merged_x_prime_y_prime_with_features.csv`.
-*   **Source:** The original satellite imagery and building footprints were sourced from the Maxar Open Data Program, NOAA, and Microsoft Building Footprints.
+*   **Source:** The original high-resolution optical imagery was sourced from the Google Earth Platform (GEP). Building footprints were acquired from the Google-Microsoft Open Building (GMOB) dataset, and administrative boundaries were sourced from OpenStreetMap (OSM).
 
 ---
 
