@@ -19,7 +19,7 @@ In the current study, missing values were simulated in the target variable ($\De
 The code and data are organized to directly map to the 4-step framework outlined in the paper's methodology:
 
 ### Step 1: Multi-modal and Multiphysics Data Generation
-*   **[Google Earth Engine (GEE)] `GEE_Sentinel1_SAR_Extraction.js` — Google Earth Engine script used to extract Sentinel-1 Synthetic Aperture Radar (SAR) dual-polarization (VV/VH) pre- and post-disaster data.
+*   **[Google Earth Engine (GEE)]** `GEE_Sentinel1_SAR_Extraction.js` — Google Earth Engine script used to extract Sentinel-1 Synthetic Aperture Radar (SAR) dual-polarization (VV/VH) pre- and post-disaster data.
 *   **[Digital Elevation Model (DEM)](https://maps.ga.lsu.edu/lidar2000/#3009354ne):** Provides the elevation value ($z$) for each grid cell (Source: Louisiana Statewide Lidar GIS agencies).
 *   **[Microsoft Building Footprints (GMOB)](https://github.com/microsoft/USBuildingFootprints):** Provides building footprints used to calculate the Building Area Ratio (BAR) per cell.
 *   **[OpenStreetMap (OSM) / overpass-turbo](https://overpass-turbo.eu/):** Provides supplementary spatial infrastructures and city boundaries.
