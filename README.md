@@ -6,32 +6,46 @@ This repository contains the code, data, and models for the paper:
 **"Training-Free Post-Disaster Damage Estimation with Incomplete Satellite Images by Integrating Open Data and Fractional Hot Deck Imputation"**
 
 ## 📖 Overview
-Rapid and accurate building damage assessment is critical for post-disaster emergency response. This project introduces a novel, training-free framework that:
-1. Utilizes **Shannon Entropy Difference ($\Delta H$)** between pre- and post-disaster satellite imagery to identify structural damage.
-2. Integrates with pre-trained semantic segmentation models (DeepLabV3) to isolate damage signals and filter out environmental noise.
-3. Addresses the critical issue of missing data (e.g., due to dense cloud cover) by employing advanced statistical imputation methods, specifically **Fractional Hot Deck Imputation (FHDI)** and **Fully Efficient Fractional Imputation (FEFI)**.
+Analyzing satellite imagery is an essential step after a severe natural disaster for monitoring the level of damage and making the best decision. This repository provides the code and data for a fast post-disaster damage framework incorporating the remote sensing of imagery, entropy calculation, object detection using an advanced machine learning (ML) model, and missing data curation. The present framework includes a combination of open-source data for high-resolution imagery, digital elevation model (DEM), building footprint, and dual-polarization synthetic aperture radar (SAR) components. 
 
-The framework is tested on varied real-world disaster scenarios, including Hurricane Laura (Lake Charles, Louisiana).
+For damage estimation at the building level, the first phase of the proposed framework is feature collection from open-source platforms. This is followed by the entropy difference calculation ($\Delta H$) between the pre-disaster and post-disaster imagery. These collected features are essential for predicting real-world scenarios where data may be missed—for example, by massive cloud cover after the disaster, which prevents the estimation of the damage level by satellite. 
+
+In the current study, missing values were simulated in the target variable ($\Delta H$), followed by curing and imputation methods for predicting the missing values. The imputation methods used in this study are the Fractional Hot Deck Imputation (FHDI) and Fully Efficient Fractional Imputation (FEFI), with a Naïve method and a Deep Learning (DL) model used for validation. The selected study area is Lake Charles, Louisiana, which was impacted by the severe Hurricane Laura (2020).
 
 ---
 
 ## 📂 Repository Structure
 
-```text
-├── images/                                       # Pre- and post-disaster satellite images
-├── merged_x_prime_y_prime_with_features.csv      # Processed feature dataset
-├── entropy-primary work_50.ipynb                 # Jupyter Notebook: Calculates $\Delta H$, applies DeepLabV3, and simulates cloud cover
-├── FHDI_FEFI_NAIVE_5times.R                      # R script for running FHDI/FEFI imputation with random missingness
-└── README.md
-```
+The code and data are organized to directly map to the 4-step framework outlined in the paper's methodology:
+
+### Step 1: Multi-modal and Multiphysics Data Generation
+*   `GEE_Building_Grid_Extraction.js` — Google Earth Engine script used to extract Lake Charles building footprints, compute areas (for BAR), and generate the 50m x 50m spatial grid.
+*   `GEE_Sentinel1_SAR_Extraction.js` — Google Earth Engine script used to extract Sentinel-1 Synthetic Aperture Radar (SAR) dual-polarization (VV/VH) pre- and post-disaster data.
+*   **[Digital Elevation Model (DEM)](https://maps.ga.lsu.edu/lidar2000/#3009354ne):** Provides the elevation value ($z$) for each grid cell (Source: Louisiana Statewide Lidar GIS agencies).
+*   **[Microsoft Building Footprints (GMOB)](https://github.com/microsoft/USBuildingFootprints):** Provides building footprints used to calculate the Building Area Ratio (BAR) per cell.
+*   **[OpenStreetMap (OSM) / overpass-turbo](https://overpass-turbo.eu/):** Provides supplementary spatial infrastructures and city boundaries.
+*   *(Note: All spatial features are extracted, clipped, and merged to generate **File 1**).*
+
+### Step 2: Rapid Damage Estimation
+*   `Images/` — Directory for pre- and post-disaster satellite images (Download required).
+*   `Coordinate Transformation.ipynb` — Coordinate Transformation script.
+*   `Entropy-Damage Detection.ipynb` — Damage Detection Logic: Calculates the $\Delta H$ index and applies DeepLabV3 filtering (Generates **File 2**).
+
+### Step 3: Data Integration
+*   `Generating the Final File.ipynb` — Runs closest coordinate checking (KDTree) to assign features from File 1 to File 2.
+*   `Final File.csv` — The **Final File** containing the merged damage indices and spatial features.
+
+### Step 4: Missing Data Recovery
+*   `Missing data recovery.R` — Identifies missing data and runs Fractional Hot Deck Imputation (FHDI) and Fully Efficient Fractional Imputation (FEFI).
+*   `DL_Baseline_Model.ipynb` — Deep Learning model used as a validation baseline.
 
 ---
 
 ## ⚙️ Installation & Requirements
 
 ### Python Dependencies
-The image processing and entropy calculations are performed in a Jupyter Notebook using Python 3.9+. Please ensure the following key packages are installed in your environment:
-* `jupyter`, `pandas`, `numpy`, `matplotlib`, `scikit-learn`, `opencv-python`, `torch`, `torchvision`
+The Python pipeline (image processing, spatial KDTree merges, and Deep Learning validation) requires Python 3.9+. Please ensure the following key packages are installed in your environment:
+* `jupyter`, `pandas`, `numpy`, `matplotlib`, `scipy`, `scikit-learn`, `opencv-python`, `torch`, `torchvision`, `tensorflow`, `scikeras`
 
 ### R Dependencies
 The fractional imputation scripts require R. Please ensure you have the `FHDI` package installed:
@@ -40,37 +54,13 @@ install.packages("FHDI")
 ```
 
 ---
-
-## 🚀 Quick Start / Usage
-
-### 1. Entropy Calculation & Data Preparation
-Open and run the Jupyter Notebook to calculate $\Delta H$, apply the DeepLabV3 filter, and prepare the dataset:
-```bash
-jupyter notebook "entropy-primary work_50.ipynb"
-```
-
-### 2. Run Imputation
-Run the R script to apply random missingness and evaluate FHDI, FEFI, and Naïve imputation methods:
-```bash
-Rscript FHDI_FEFI_NAIVE_5times.R
-```
-
----
-
-## 💾 Data Availability
-*   **Raw Images:** Pre- and post-disaster satellite imagery (acquired via the Google Earth Platform / GEP) are included in the `images/` directory.
-*   **Feature Dataset:** The fully processed numerical features used for the imputation experiments are provided directly in the file `merged_x_prime_y_prime_with_features.csv`.
-*   **Source:** The original high-resolution optical imagery was sourced from the Google Earth Platform (GEP). Building footprints were acquired from the Google-Microsoft Open Building (GMOB) dataset, and administrative boundaries were sourced from OpenStreetMap (OSM).
-
----
-
 ## 📝 Citation
 Our paper is currently under review (invited for second review) at *Scientific Reports*. If you find this code or framework useful in your research, please consider citing our paper:
 
 ```bibtex
 @article{abuoliem2026,
   title={Training-Free Post-Disaster Damage Estimation with Incomplete Satellite Images by Integrating Open Data and Fractional Hot Deck Imputation},
-  author={Abuoliem, Dima and Ardiles-Cruz, Erika and Ceylan, Halil and Kim, Sunghwan and Kim, Jae Kwang and Cho, In Ho},
+  author={Abuoliem, Dima and Ardiles-Cruz, Erika and Ceylan, Halil and Kim, Sunghwan and Kim, Jae Kwang and Cho, In},
   journal={Scientific Reports},
   year={2026},
   note={Under review (Invited for second review)}
